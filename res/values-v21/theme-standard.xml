@@ -23,6 +23,8 @@ Copyright (C) 2015 Adrian Ulrich <adrian@blinkenlights.ch>
 		<item name="float_color">@color/material_grey_400</item>
 		<item name="tabs_background">@color/vanillaPrimary</item>
 		<item name="now_playing_marker">@color/vanillaAccent</item>
+		<item name="controls_normal">@color/material_grey_600</item>
+		<item name="controls_active">@color/vanillaAccent</item>
 		<item name="android:colorAccent">@color/vanillaAccent</item>
 		<item name="android:colorPrimary">@color/vanillaPrimary</item>
 		<item name="android:colorPrimaryDark">@color/vanillaPrimaryDark</item>
@@ -48,6 +50,8 @@ Copyright (C) 2015 Adrian Ulrich <adrian@blinkenlights.ch>
 		<item name="float_color">@color/material_grey_900</item>
 		<item name="tabs_background">@color/vanillaPrimary</item>
 		<item name="now_playing_marker">@color/vanillaAccent</item>
+		<item name="controls_normal">@color/material_grey_600</item>
+		<item name="controls_active">@color/vanillaAccent</item>
 		<item name="android:colorAccent">@color/vanillaAccent</item>
 		<item name="android:colorPrimary">@color/vanillaPrimary</item>
 		<item name="android:colorPrimaryDark">@color/vanillaPrimaryDark</item>

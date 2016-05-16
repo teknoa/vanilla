@@ -28,6 +28,8 @@ THE SOFTWARE.
 		<item name="float_color">#f222</item>
 		<item name="tabs_background">#ff1e1e1e</item>
 		<item name="now_playing_marker">@android:color/holo_blue_dark</item>
+		<item name="controls_normal">#fff5f5f5</item>
+		<item name="controls_active">@android:color/holo_blue_dark</item>
 		<item name="android:scrollbarStyle">outsideInset</item>
 	</style>
 
