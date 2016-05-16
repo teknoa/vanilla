@@ -3,18 +3,25 @@ use strict;
 
 use constant OUTDIR => './res/values-v21/';
 
-my $THEMES = {
-	standard => {
+my $THEMES = [
+	{
+		_name => 'standard',
 		light => { colorAccent => '#ff3e677a', colorPrimary => '#ff37474f', colorPrimaryDark => '#ff263238'},
 		dark  => { colorAccent => '#ff3e677a', colorPrimary => '#ff37474f', colorPrimaryDark => '#ff263238'},
 	},
-};
+	{
+		_name => 'greyish',
+		light => { colorAccent => '#ff212121', colorPrimary => '#ff212121', colorPrimaryDark => '#ff090909'},
+		dark  => { colorAccent => '#ffececec', colorPrimary => '#ff212121', colorPrimaryDark => '#ff090909'},
+	}
+];
 
 
-foreach my $theme_name (keys(%$THEMES)) {
+foreach my $theme_ref (@$THEMES) {
+	my $theme_name = $theme_ref->{_name};
 	my $theme_id = ($theme_name eq 'standard' ? '' : ucfirst($theme_name)."."); # standard has no prefix
 	my $outfile  = OUTDIR."/theme-$theme_name.xml";
-	my $outbuff  = get_xml($THEMES->{$theme_name}, $theme_id);
+	my $outbuff  = get_xml($theme_ref, $theme_id);
 
 	open(OUT, ">", $outfile) or die "Can not write to $outfile: $!\n";
 	print OUT $outbuff;
