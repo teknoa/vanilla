@@ -24,7 +24,7 @@ Copyright (C) 2015 Adrian Ulrich <adrian@blinkenlights.ch>
 	<!-- universal styles -->
 	<style name="Universal.PlaybackActionBar" parent="android:Widget.Material.ActionBar">
 		<item name="android:displayOptions">showTitle|homeAsUp</item>
-		<item name="android:background">@color/vanillaPrimary</item>
+		<item name="android:background">?tabs_background</item>
 	</style>
 
 </resources>
