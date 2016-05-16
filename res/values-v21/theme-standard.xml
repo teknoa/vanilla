@@ -44,6 +44,11 @@
 		<item name="android:windowNoTitle">true</item>
 	</style>
 
+	<style name="PopupDialog" parent="android:Theme.Material.Light.Dialog.MinWidth">
+		<item name="controls_normal">@color/material_grey_600</item>
+		<item name="controls_active">#ff3e677a</item>
+	</style>
+
 	<!-- dark theme -->
 	<style name="Dark.VanillaBase" parent="android:Theme.Material">
 		<item name="overlay_background_color">@color/overlay_background_dark</item>
@@ -70,4 +75,10 @@
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>
 	</style>
+
+	<style name="Dark.PopupDialog" parent="android:Theme.Material.Dialog.MinWidth">
+		<item name="controls_normal">@color/material_grey_600</item>
+		<item name="controls_active">#ff3e677a</item>
+	</style>
+
 </resources>

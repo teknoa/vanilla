@@ -46,8 +46,11 @@ public class ThemeHelper {
 				case R.style.BackActionBar:
 					theme = themeBase + (R.style.BackActionBar - R.style.VanillaBase);
 					break;
-				default:
+				case R.style.PopupDialog:
+					theme = themeBase + (R.style.PopupDialog - R.style.VanillaBase);
 					break;
+				default:
+					throw new IllegalArgumentException("setTheme() called with unknown theme!");
 			}
 		}
 		context.setTheme(theme);

@@ -73,7 +73,7 @@ public class VanillaImageButton extends ImageButton {
 	private int fetchAttrColor(int attr) {
 		TypedValue typedValue = new TypedValue();
 		TypedArray a = mContext.obtainStyledAttributes(typedValue.data, new int[] { attr });
-		int color = a.getColor(0, 0xFFFF0000);
+		int color = a.getColor(0, 0);
 		a.recycle();
 		return color;
 	}

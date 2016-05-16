@@ -123,6 +123,11 @@ my $DATA = << "EOF";
 		<item name="android:windowNoTitle">true</item>
 	</style>
 
+	<style name="${tid}PopupDialog" parent="android:Theme.Material.Light.Dialog.MinWidth">
+		<item name="controls_normal">\@color/material_grey_600</item>
+		<item name="controls_active">$this->{light}->{colorAccent}</item>
+	</style>
+
 	<!-- dark theme -->
 	<style name="${tid}Dark.VanillaBase" parent="android:Theme.Material">
 		<item name="overlay_background_color">\@color/overlay_background_dark</item>
@@ -149,6 +154,12 @@ my $DATA = << "EOF";
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>
 	</style>
+
+	<style name="${tid}Dark.PopupDialog" parent="android:Theme.Material.Dialog.MinWidth">
+		<item name="controls_normal">\@color/material_grey_600</item>
+		<item name="controls_active">$this->{light}->{colorAccent}</item>
+	</style>
+
 </resources>
 EOF
 	return $DATA

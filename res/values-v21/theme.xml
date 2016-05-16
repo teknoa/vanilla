@@ -17,10 +17,6 @@ Copyright (C) 2015 Adrian Ulrich <adrian@blinkenlights.ch>
 -->
 
 <resources>
-	<!-- styles -->
-	<style name="Dialog" parent="android:Theme.Material.Light.Dialog" />
-	<style name="DialogMinWidth" parent="android:Theme.Material.Light.Dialog.MinWidth" />
-
 	<!-- universal styles -->
 	<style name="Universal.PlaybackActionBar" parent="android:Widget.Material.ActionBar">
 		<item name="android:displayOptions">showTitle|homeAsUp</item>
