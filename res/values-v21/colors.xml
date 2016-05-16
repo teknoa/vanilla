@@ -18,9 +18,6 @@
 	<color name="controls_active">@color/vanillaAccent</color>
 	<color name="controls_normal">@color/material_grey_600</color>
 
-	<!-- showqueue info -->
-	<color name="now_playing_marker">@color/vanillaAccent</color>
-
 	<!-- library tabs -->
 	<color name="tabs_active_indicator">@android:color/background_light</color>
 
