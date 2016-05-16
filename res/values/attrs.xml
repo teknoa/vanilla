@@ -2,4 +2,5 @@
 	<attr name="overlay_background_color" format="color" />
 	<attr name="overlay_foreground_color" format="color" />
 	<attr name="float_color"              format="color" />
+	<attr name="tabs_background"          format="color" />
 </resources>

@@ -22,7 +22,6 @@
 	<color name="now_playing_marker">@color/vanillaAccent</color>
 
 	<!-- library tabs -->
-	<color name="tabs_background">@color/vanillaPrimary</color>
 	<color name="tabs_active_indicator">@android:color/background_light</color>
 
 	<!-- themed overlay colors for full playback activity -->
