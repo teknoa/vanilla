@@ -165,12 +165,12 @@ public class PreferencesActivity extends PreferenceActivity {
 			super.onCreate(savedInstanceState);
 			addPreferencesFromResource(R.xml.preference_playback);
 
-			// Hide the dark theme preference if this device
+			// Hide the theme preference if this device
 			// does not support multiple themes
 			PreferenceScreen screen = getPreferenceScreen();
-			CheckBoxPreference dark_theme_pref = (CheckBoxPreference)findPreference("use_dark_theme");
+			ListPreferenceSummary theme_preference = (ListPreferenceSummary)findPreference(PrefKeys.SELECTED_THEME);
 			if (ThemeHelper.usesHoloTheme()) // not available on 4.x devices
-				screen.removePreference(dark_theme_pref);
+				screen.removePreference(theme_preference);
 
 		}
 	}
