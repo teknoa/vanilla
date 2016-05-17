@@ -78,7 +78,7 @@
 
 	<style name="Greyish.Dark.PopupDialog" parent="android:Theme.Material.Dialog.MinWidth">
 		<item name="controls_normal">@color/material_grey_600</item>
-		<item name="controls_active">#ff212121</item>
+		<item name="controls_active">#ffececec</item>
 	</style>
 
 </resources>
