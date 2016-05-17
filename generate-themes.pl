@@ -157,7 +157,7 @@ my $DATA = << "EOF";
 
 	<style name="${tid}Dark.PopupDialog" parent="android:Theme.Material.Dialog.MinWidth">
 		<item name="controls_normal">\@color/material_grey_600</item>
-		<item name="controls_active">$this->{light}->{colorAccent}</item>
+		<item name="controls_active">$this->{dark}->{colorAccent}</item>
 	</style>
 
 </resources>
