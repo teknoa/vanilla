@@ -29,12 +29,6 @@ THE SOFTWARE.
 		android:summary="@string/playback_on_startup_summary"
 		android:defaultValue="false" />
 	<ch.blinkenlights.android.vanilla.ListPreferenceSummary
-		android:key="selected_theme"
-		android:title="TNFXME Theme"
-		android:entries="@array/theme_entries"
-		android:entryValues="@array/theme_values"
-		android:defaultValue="0" />
-	<ch.blinkenlights.android.vanilla.ListPreferenceSummary
 		android:key="display_mode"
 		android:title="@string/display_mode_title"
 		android:entries="@array/display_mode_entries"

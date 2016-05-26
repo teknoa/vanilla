@@ -183,14 +183,6 @@ public class PreferencesActivity extends PreferenceActivity
 		{
 			super.onCreate(savedInstanceState);
 			addPreferencesFromResource(R.xml.preference_playback);
-
-			// Hide the theme preference if this device
-			// does not support multiple themes
-			PreferenceScreen screen = getPreferenceScreen();
-			ListPreferenceSummary theme_preference = (ListPreferenceSummary)findPreference(PrefKeys.SELECTED_THEME);
-			if (ThemeHelper.usesHoloTheme()) // not available on 4.x devices
-				screen.removePreference(theme_preference);
-
 		}
 	}
 
