@@ -176,7 +176,7 @@ public class PlaylistActivity extends Activity
 			String message = getResources().getString(R.string.delete_playlist, mPlaylistName);
 			builder.setMessage(message);
 			builder.setPositiveButton(R.string.delete, this);
-			builder.setNegativeButton(R.string.cancel, this);
+			builder.setNegativeButton(android.R.string.cancel, this);
 			builder.show();
 			break;
 		}
@@ -233,6 +233,9 @@ public class PlaylistActivity extends Activity
 	 */
 	private void performAction(int action, int position, long audioId)
 	{
+		if (action == LibraryActivity.ACTION_PLAY_OR_ENQUEUE)
+			action = (PlaybackService.get(this).isPlaying() ? LibraryActivity.ACTION_ENQUEUE : LibraryActivity.ACTION_PLAY);
+
 		if (action == LibraryActivity.ACTION_LAST_USED)
 			action = mLastAction;
 

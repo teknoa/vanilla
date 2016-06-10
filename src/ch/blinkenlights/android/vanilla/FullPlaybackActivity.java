@@ -360,7 +360,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 							mHandler.sendMessage(mHandler.obtainMessage(MSG_DELETE, intent));
 						}
 					})
-					.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
 						}
 					});
@@ -515,8 +515,8 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			}
 			mFormat = sb.toString();
 
-			float[] rg = PlaybackService.get(this).getReplayGainValues(song.path);
-			mReplayGain = "track="+rg[0]+"dB, album="+rg[1]+"dB";
+			BastpUtil.GainValues rg = PlaybackService.get(this).getReplayGainValues(song.path);
+			mReplayGain = String.format("base=%.2f, track=%.2f, album=%.2f", rg.base, rg.track, rg.album);
 
 			data.release();
 		}
@@ -534,6 +534,8 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		} else if ("audio/mp4".equals(mime)) {
 			return "AAC";
 		} else if ("audio/vorbis".equals(mime)) {
+			return "Ogg Vorbis";
+		} else if ("application/ogg".equals(mime)) {
 			return "Ogg Vorbis";
 		} else if ("audio/flac".equals(mime)) {
 			return "FLAC";
