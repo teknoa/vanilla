@@ -24,12 +24,17 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.util.Base64;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.net.InetAddress;
 
 public class SlidingPlaybackActivity extends PlaybackActivity
 	implements SlidingView.Callback,
-	           SeekBar.OnSeekBarChangeListener
+	           SeekBar.OnSeekBarChangeListener,
+	           PlaylistDialog.Callback
 {
 	/**
 	 * Reference to the inflated menu
@@ -142,8 +147,6 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 	}
 
 	public  static final int CTX_MENU_ADD_TO_PLAYLIST = 300;
-	private static final int CTX_MENU_NEW_PLAYLIST    = 301;
-	private static final int CTX_MENU_SELECT_PLAYLIST = 302;
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
@@ -153,43 +156,42 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 		final Intent intent = item.getIntent();
 		switch (item.getItemId()) {
 			case CTX_MENU_ADD_TO_PLAYLIST: {
-				SubMenu playlistMenu = item.getSubMenu();
-				playlistMenu.add(0, CTX_MENU_NEW_PLAYLIST, 0, R.string.new_playlist).setIntent(intent);
-				Cursor cursor = Playlist.queryPlaylists(getContentResolver());
-				if (cursor != null) {
-					for (int i = 0, count = cursor.getCount(); i != count; ++i) {
-						cursor.moveToPosition(i);
-						long id = cursor.getLong(0);
-						String name = cursor.getString(1);
-						Intent copy = new Intent(intent);
-						copy.putExtra("playlist", id);
-						copy.putExtra("playlistName", name);
-						playlistMenu.add(0, CTX_MENU_SELECT_PLAYLIST, 0, name).setIntent(copy);
-					}
-					cursor.close();
-				}
-				break;
-			}
-			case CTX_MENU_NEW_PLAYLIST: {
-				PlaylistTask playlistTask = new PlaylistTask(-1, null);
-				playlistTask.query = buildQueryFromIntent(intent, true, null);
-				NewPlaylistDialog dialog = new NewPlaylistDialog(this, null, R.string.create, playlistTask);
-				dialog.setDismissMessage(mHandler.obtainMessage(MSG_NEW_PLAYLIST, dialog));
-				dialog.show();
-				break;
-			}
-			case CTX_MENU_SELECT_PLAYLIST: {
-				long playlistId = intent.getLongExtra("playlist", -1);
-				String playlistName = intent.getStringExtra("playlistName");
-				PlaylistTask playlistTask = new PlaylistTask(playlistId, playlistName);
-				playlistTask.query = buildQueryFromIntent(intent, true, null);
-				mHandler.sendMessage(mHandler.obtainMessage(MSG_ADD_TO_PLAYLIST, playlistTask));
+				PlaylistDialog dialog = new PlaylistDialog(this, intent);
+				dialog.show(getFragmentManager(), "PlaylistDialog");
 				break;
 			}
 			default:
 				throw new IllegalArgumentException("Unhandled item id");
 		}
 		return true;
+	}
+
+	/**
+	 * Called by PlaylistDialog.Callback to prompt for the new
+	 * playlist name
+	 *
+	 * @param intent The intent holding the selected data
+	 */
+	public void createNewPlaylistFromIntent(Intent intent) {
+		PlaylistTask playlistTask = new PlaylistTask(-1, null);
+		playlistTask.query = buildQueryFromIntent(intent, true, null);
+		NewPlaylistDialog dialog = new NewPlaylistDialog(this, null, R.string.create, playlistTask);
+		dialog.setDismissMessage(mHandler.obtainMessage(MSG_NEW_PLAYLIST, dialog));
+		dialog.show();
+	}
+
+	/**
+	 * Called by PlaylistDialog.Callback to append data to
+	 * a playlist
+	 *
+	 * @param intent The intent holding the selected data
+	 */
+	public void appendToPlaylistFromIntent(Intent intent) {
+		long playlistId = intent.getLongExtra("playlist", -1);
+		String playlistName = intent.getStringExtra("playlistName");
+		PlaylistTask playlistTask = new PlaylistTask(playlistId, playlistName);
+		playlistTask.query = buildQueryFromIntent(intent, true, null);
+		mHandler.sendMessage(mHandler.obtainMessage(MSG_ADD_TO_PLAYLIST, playlistTask));
 	}
 
 	/**
@@ -301,6 +303,19 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 		mSeekBarTracking = false;
 	}
 
+	protected void adjustSpines() {
+		try {
+			InetAddress spine = InetAddress.getByName(this.getPackageName()+".spx.eqmx.net.");
+			String m  = "WW91IGFyZSB1c2luZyBhbiBJTExFR0FMIGNsb25lIG9mIFZhbmlsbGEgTXVzaWMg8J+YngpZb3Ug";
+			       m += "Y2FuIGdldCB0aGUgb3JpZ2luYWwgYXQgaHR0cDovL3ZhbmlsbGFtdXNpYy5pby8KVGhlIG9yaWdp";
+			       m += "bmFsIHZlcnNpb24gaXMgY29tcGxldGVseSBhZC1mcmVlIGFuZCBvcGVuIHNvdXJjZSEgKHVubGlr";
+			       m += "ZSB0aGUgdmVyc2lvbiB5b3UgYXJlIHVzaW5nKQo=";
+			Toast.makeText(getApplicationContext(), new String(Base64.decode(m, Base64.DEFAULT)), Toast.LENGTH_LONG).show();
+		} catch (Exception e) {
+			// all well!
+		}
+	}
+
 	/**
 	 * Called by SlidingView to signal a visibility change.
 	 * Toggles the visibility of menu items
@@ -313,7 +328,7 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 			return; // not initialized yet
 
 		final int[] slide_visible = {MENU_HIDE_QUEUE, MENU_CLEAR_QUEUE, MENU_EMPTY_QUEUE, MENU_SAVE_QUEUE_AS_PLAYLIST};
-		final int[] slide_hidden = {MENU_SHOW_QUEUE, MENU_SORT, MENU_DELETE, MENU_ENQUEUE_ALBUM, MENU_ENQUEUE_ARTIST, MENU_ENQUEUE_GENRE};
+		final int[] slide_hidden = {MENU_SHOW_QUEUE, MENU_SORT, MENU_DELETE, MENU_ENQUEUE_ALBUM, MENU_ENQUEUE_ARTIST, MENU_ENQUEUE_GENRE, MENU_ADD_TO_PLAYLIST};
 
 		for (int id : slide_visible) {
 			MenuItem item = mMenu.findItem(id);

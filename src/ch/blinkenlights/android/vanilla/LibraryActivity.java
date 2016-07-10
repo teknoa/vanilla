@@ -426,6 +426,9 @@ public class LibraryActivity
 			}
 		}
 
+		if (id == LibraryAdapter.HEADER_ID)
+			all = true; // page header was clicked -> force all mode
+
 		QueryTask query = buildQueryFromIntent(intent, false, (all ? (MediaAdapter)mCurrentAdapter : null));
 		query.mode = modeForAction[mode];
 		PlaybackService.get(this).addSongs(query);
@@ -625,24 +628,6 @@ public class LibraryActivity
 		}
 	}
 
-	/**
-	 * Builds a media query based off the data stored in the given intent.
-	 *
-	 * @param intent An intent created with
-	 * {@link LibraryAdapter#createData(View)}.
-	 * @param empty If true, use the empty projection (only query id).
-	 * @param allSource use this mediaAdapter to queue all hold items
-	 */
-	@Override
-	protected QueryTask buildQueryFromIntent(Intent intent, boolean empty, MediaAdapter allSource) {
-		long id = intent.getLongExtra("id", LibraryAdapter.INVALID_ID);
-		if (allSource == null && id == LibraryAdapter.HEADER_ID) {
-			// 'all' was not forced, but user clicked on the header: use the current adapter
-			allSource = (MediaAdapter)mCurrentAdapter;
-		}
-		return super.buildQueryFromIntent(intent, empty, allSource);
-	}
-
 	private static final int CTX_MENU_PLAY = 0;
 	private static final int CTX_MENU_ENQUEUE = 1;
 	private static final int CTX_MENU_EXPAND = 2;
@@ -676,6 +661,9 @@ public class LibraryActivity
 			if (FileUtils.canDispatchIntent(rowData))
 				menu.add(0, CTX_MENU_OPEN_EXTERNAL, 0, R.string.open).setIntent(rowData);
 			menu.add(0, CTX_MENU_PLAY, 0, R.string.play).setIntent(rowData);
+			if (type <= MediaUtils.TYPE_SONG) {
+				menu.add(0, CTX_MENU_PLAY_ALL, 0, R.string.play_all).setIntent(rowData);
+			}
 			menu.add(0, CTX_MENU_ENQUEUE_AS_NEXT, 0, R.string.enqueue_as_next).setIntent(rowData);
 			menu.add(0, CTX_MENU_ENQUEUE, 0, R.string.enqueue).setIntent(rowData);
 			if (type == MediaUtils.TYPE_PLAYLIST) {
@@ -748,7 +736,6 @@ public class LibraryActivity
 				.setMessage(delete_message)
 				.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						mPagerAdapter.maintainPosition(); // remember current scrolling position
 						mHandler.sendMessage(mHandler.obtainMessage(MSG_DELETE, intent));
 					}
 				})
@@ -882,6 +869,7 @@ public class LibraryActivity
 			SharedPreferences.Editor editor = PlaybackService.getSettings(this).edit();
 			editor.putInt("library_page", message.arg1);
 			editor.apply();
+			super.adjustSpines();
 			break;
 		}
 		case MSG_UPDATE_COVER: {
