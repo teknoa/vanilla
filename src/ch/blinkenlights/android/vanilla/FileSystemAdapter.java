@@ -48,7 +48,6 @@ import java.util.regex.Pattern;
 public class FileSystemAdapter
 	extends BaseAdapter
 	implements LibraryAdapter
-	         , View.OnClickListener
 {
 	private static final Pattern SPACE_SPLIT = Pattern.compile("\\s+");
 	private static final Pattern FILE_SEPARATOR = Pattern.compile(File.separator);
@@ -191,33 +190,29 @@ public class FileSystemAdapter
 	@Override
 	public View getView(int pos, View convertView, ViewGroup parent)
 	{
-		View view;
+		DraggableRow row;
 		ViewHolder holder;
 
 		if (convertView == null) {
-			view = mInflater.inflate(R.layout.library_row_expandable, null);
-			holder = new ViewHolder();
-			holder.text = (TextView)view.findViewById(R.id.text);
-			holder.divider = (View)view.findViewById(R.id.divider);
-			holder.cover = (LazyCoverView)view.findViewById(R.id.cover);
-			holder.arrow = (ImageView)view.findViewById(R.id.arrow);
+			row = (DraggableRow)mInflater.inflate(R.layout.draggable_row, parent, false);
+			row.setupLayout(DraggableRow.LAYOUT_LISTVIEW);
 
-			holder.cover.setImageDrawable(mFolderIcon);
-			holder.arrow.setOnClickListener(this);
-			view.setTag(holder);
+			holder = new ViewHolder();
+			row.setTag(holder);
+			row.getCoverView().setImageDrawable(mFolderIcon);
 		} else {
-			view = convertView;
-			holder = (ViewHolder)view.getTag();
+			row = (DraggableRow)convertView;
+			holder = (ViewHolder)row.getTag();
 		}
 
 		File file = mFiles[pos];
 		boolean isDirectory = file.isDirectory();
 		holder.id = pos;
-		holder.text.setText(file.getName());
-		holder.arrow.setVisibility(isDirectory ? View.VISIBLE : View.GONE);
-		holder.divider.setVisibility(isDirectory ? View.VISIBLE : View.GONE);
-		holder.cover.setVisibility(isDirectory ? View.VISIBLE : View.GONE);
-		return view;
+
+		row.getTextView().setText(file.getName());
+		row.getCoverView().setVisibility(isDirectory ? View.VISIBLE : View.GONE);
+		row.showDragger(isDirectory);
+		return row;
 	}
 
 	@Override
@@ -295,7 +290,7 @@ public class FileSystemAdapter
 		Intent intent = new Intent();
 		intent.putExtra(LibraryAdapter.DATA_TYPE, MediaUtils.TYPE_FILE);
 		intent.putExtra(LibraryAdapter.DATA_ID, holder.id);
-		intent.putExtra(LibraryAdapter.DATA_TITLE, holder.text.getText().toString());
+		intent.putExtra(LibraryAdapter.DATA_TITLE, ((DraggableRow)view).getTextView().getText().toString());
 		intent.putExtra(LibraryAdapter.DATA_EXPANDABLE, file.isDirectory());
 
 		String path;
@@ -309,12 +304,12 @@ public class FileSystemAdapter
 		return intent;
 	}
 
-	@Override
-	public void onClick(View view) {
-		onHandleRowClick((View)view.getParent());
-	}
-
-	public void onHandleRowClick(View view) {
+	/**
+	 * A row was clicked: this was dispatched by LibraryPagerAdapter
+	 *
+	 * @param View view which was clicked
+	 */
+	public void onViewClicked(View view) {
 		Intent intent = createData(view);
 		boolean isFolder = intent.getBooleanExtra(LibraryAdapter.DATA_EXPANDABLE, false);
 

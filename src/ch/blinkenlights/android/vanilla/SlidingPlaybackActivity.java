@@ -156,7 +156,7 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 		final Intent intent = item.getIntent();
 		switch (item.getItemId()) {
 			case CTX_MENU_ADD_TO_PLAYLIST: {
-				PlaylistDialog dialog = new PlaylistDialog(this, intent);
+				PlaylistDialog dialog = new PlaylistDialog(this, intent, null);
 				dialog.show(getFragmentManager(), "PlaylistDialog");
 				break;
 			}
@@ -172,9 +172,9 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 	 *
 	 * @param intent The intent holding the selected data
 	 */
-	public void createNewPlaylistFromIntent(Intent intent) {
+	public void createNewPlaylistFromIntent(Intent intent, MediaAdapter allSource) {
 		PlaylistTask playlistTask = new PlaylistTask(-1, null);
-		playlistTask.query = buildQueryFromIntent(intent, true, null);
+		playlistTask.query = buildQueryFromIntent(intent, true, allSource);
 		NewPlaylistDialog dialog = new NewPlaylistDialog(this, null, R.string.create, playlistTask);
 		dialog.setDismissMessage(mHandler.obtainMessage(MSG_NEW_PLAYLIST, dialog));
 		dialog.show();
@@ -186,11 +186,11 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 	 *
 	 * @param intent The intent holding the selected data
 	 */
-	public void appendToPlaylistFromIntent(Intent intent) {
+	public void appendToPlaylistFromIntent(Intent intent, MediaAdapter allSource) {
 		long playlistId = intent.getLongExtra("playlist", -1);
 		String playlistName = intent.getStringExtra("playlistName");
 		PlaylistTask playlistTask = new PlaylistTask(playlistId, playlistName);
-		playlistTask.query = buildQueryFromIntent(intent, true, null);
+		playlistTask.query = buildQueryFromIntent(intent, true, allSource);
 		mHandler.sendMessage(mHandler.obtainMessage(MSG_ADD_TO_PLAYLIST, playlistTask));
 	}
 
@@ -328,7 +328,7 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 			return; // not initialized yet
 
 		final int[] slide_visible = {MENU_HIDE_QUEUE, MENU_CLEAR_QUEUE, MENU_EMPTY_QUEUE, MENU_SAVE_QUEUE_AS_PLAYLIST};
-		final int[] slide_hidden = {MENU_SHOW_QUEUE, MENU_SORT, MENU_DELETE, MENU_ENQUEUE_ALBUM, MENU_ENQUEUE_ARTIST, MENU_ENQUEUE_GENRE, MENU_ADD_TO_PLAYLIST};
+		final int[] slide_hidden = {MENU_SHOW_QUEUE, MENU_SORT, MENU_DELETE, MENU_ENQUEUE_ALBUM, MENU_ENQUEUE_ARTIST, MENU_ENQUEUE_GENRE, MENU_ADD_TO_PLAYLIST, MENU_SHARE};
 
 		for (int id : slide_visible) {
 			MenuItem item = mMenu.findItem(id);

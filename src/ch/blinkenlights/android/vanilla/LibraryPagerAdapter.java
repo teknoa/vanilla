@@ -26,7 +26,6 @@ package ch.blinkenlights.android.vanilla;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -35,6 +34,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -165,9 +165,9 @@ public class LibraryPagerAdapter
 	 * song limiters.
 	 */
 	private String mHeaderText;
-	private LinearLayout mArtistHeader;
-	private LinearLayout mAlbumHeader;
-	private LinearLayout mSongHeader;
+	private DraggableRow mArtistHeader;
+	private DraggableRow mAlbumHeader;
+	private DraggableRow mSongHeader;
 	/**
 	 * The current filter text, or null if none.
 	 */
@@ -311,24 +311,24 @@ public class LibraryPagerAdapter
 			LibraryActivity activity = mActivity;
 			LayoutInflater inflater = activity.getLayoutInflater();
 			LibraryAdapter adapter;
-			LinearLayout header = null;
+			DraggableRow header = null;
 
 			switch (type) {
 			case MediaUtils.TYPE_ARTIST:
 				adapter = mArtistAdapter = new MediaAdapter(activity, MediaUtils.TYPE_ARTIST, mPendingArtistLimiter, activity);
 				mArtistAdapter.setExpandable(mSongsPosition != -1 || mAlbumsPosition != -1);
-				mArtistHeader = header = (LinearLayout)inflater.inflate(R.layout.library_row_expandable, null);
+				mArtistHeader = header = (DraggableRow)inflater.inflate(R.layout.draggable_row, null);
 				break;
 			case MediaUtils.TYPE_ALBUM:
 				adapter = mAlbumAdapter = new MediaAdapter(activity, MediaUtils.TYPE_ALBUM, mPendingAlbumLimiter, activity);
 				mAlbumAdapter.setExpandable(mSongsPosition != -1);
 				mPendingAlbumLimiter = null;
-				mAlbumHeader = header = (LinearLayout)inflater.inflate(R.layout.library_row_expandable, null);
+				mAlbumHeader = header = (DraggableRow)inflater.inflate(R.layout.draggable_row, null);
 				break;
 			case MediaUtils.TYPE_SONG:
 				adapter = mSongAdapter = new MediaAdapter(activity, MediaUtils.TYPE_SONG, mPendingSongLimiter, activity);
 				mPendingSongLimiter = null;
-				mSongHeader = header = (LinearLayout)inflater.inflate(R.layout.library_row_expandable, null);
+				mSongHeader = header = (DraggableRow)inflater.inflate(R.layout.draggable_row, null);
 				break;
 			case MediaUtils.TYPE_PLAYLIST:
 				adapter = mPlaylistAdapter = new MediaAdapter(activity, MediaUtils.TYPE_PLAYLIST, null, activity);
@@ -351,8 +351,7 @@ public class LibraryPagerAdapter
 
 			view.setTag(type);
 			if (header != null) {
-				TextView headerText = (TextView)header.findViewById(R.id.text);
-				headerText.setText(mHeaderText);
+				header.getTextView().setText(mHeaderText);
 				header.setTag(new ViewHolder()); // behave like a normal library row
 				view.addHeaderView(header);
 			}
@@ -455,11 +454,11 @@ public class LibraryPagerAdapter
 	public void setHeaderText(String text)
 	{
 		if (mArtistHeader != null)
-			((TextView)mArtistHeader.findViewById(R.id.text)).setText(text);
+			mArtistHeader.getTextView().setText(text);
 		if (mAlbumHeader != null)
-			((TextView)mAlbumHeader.findViewById(R.id.text)).setText(text);
+			mAlbumHeader.getTextView().setText(text);
 		if (mSongHeader != null)
-			((TextView)mSongHeader.findViewById(R.id.text)).setText(text);
+			mSongHeader.getTextView().setText(text);
 		mHeaderText = text;
 	}
 
@@ -844,10 +843,46 @@ public class LibraryPagerAdapter
 	public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
 		int type = (Integer)parent.getTag();
 		if (type == MediaUtils.TYPE_FILE) {
-			mFilesAdapter.onHandleRowClick(view);
+			mFilesAdapter.onViewClicked(view);
 		} else {
 			Intent intent = id == -1 ? createHeaderIntent(view) : mCurrentAdapter.createData(view);
 			mActivity.onItemClicked(intent);
+		}
+	}
+
+	/**
+	 * Perform usability-related actions on pager and contained lists, e.g. highlight current song
+	 * or scroll to it if opted-in
+	 * @param song song that is currently playing, can be null
+     */
+	public void onSongChange(Song song) {
+		if (mCurrentPage == -1) // no page active, nothing to do
+			return;
+
+		int type = mTabOrder[mCurrentPage];
+		ListView view = mLists[type];
+		if (view == null) // not initialized yet, nothing to do
+			return;
+
+		long id = MediaUtils.getCurrentIdForType(song, type);
+		if (id == -1) // unknown type
+			return;
+
+		// scroll to song on song change if opted-in
+		SharedPreferences sharedPrefs = PlaybackService.getSettings(mActivity);
+		boolean shouldScroll = sharedPrefs.getBoolean(PrefKeys.ENABLE_SCROLL_TO_SONG, PrefDefaults.ENABLE_SCROLL_TO_SONG);
+		if(shouldScroll) {
+			int middlePos = (view.getFirstVisiblePosition() + view.getLastVisiblePosition()) / 2;
+			for (int pos = 0; pos < view.getCount(); pos++) {
+				if (view.getItemIdAtPosition(pos) == id) {
+					if (Math.abs(middlePos - pos) < 30) {
+						view.smoothScrollToPosition(pos);
+					} else {
+						view.setSelection(pos);
+					}
+					break;
+				}
+			}
 		}
 	}
 

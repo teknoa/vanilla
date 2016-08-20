@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Adrian Ulrich <adrian@blinkenlights.ch>
+ * Copyright (C) 2013-2016 Adrian Ulrich <adrian@blinkenlights.ch>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,53 +31,37 @@ import android.graphics.drawable.Drawable;
 
 public class FilebrowserStartAdapter
 	extends ArrayAdapter<String>
-	implements View.OnClickListener
 {
 	
-	private final FilebrowserStartActivity mActivity;
-	private final Drawable mFolderIcon;
 	private final LayoutInflater mInflater;
 
-	public FilebrowserStartAdapter(FilebrowserStartActivity activity, int resource) {
-		super(activity, resource);
-		mActivity   = activity;
-		mFolderIcon = activity.getResources().getDrawable(R.drawable.folder);
-		mInflater   = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	public FilebrowserStartAdapter(Context context, int resource) {
+		super(context, resource);
+		mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
 	@Override
 	public View getView(int pos, View convertView, ViewGroup parent) {
-		View view;
+		DraggableRow row;
 		ViewHolder holder;
 
 		if (convertView == null) {
-			view = mInflater.inflate(R.layout.library_row_expandable, null);
+			row = (DraggableRow)mInflater.inflate(R.layout.draggable_row, parent, false);
+			row.setupLayout(DraggableRow.LAYOUT_LISTVIEW);
+
+			row.getCoverView().setImageResource(R.drawable.folder);
+
 			holder = new ViewHolder();
-			holder.text = (TextView)view.findViewById(R.id.text);
-			holder.divider = view.findViewById(R.id.divider);
-			holder.cover = (LazyCoverView)view.findViewById(R.id.cover);
-
-			holder.arrow = (ImageView)view.findViewById(R.id.arrow);
-
-			holder.cover.setImageDrawable(mFolderIcon);
-			holder.text.setOnClickListener(this);
-			holder.cover.setVisibility(View.VISIBLE);
-			view.setTag(holder);
+			row.setTag(holder);
 		} else {
-			view = convertView;
-			holder = (ViewHolder)view.getTag();
+			row = (DraggableRow)convertView;
+			holder = (ViewHolder)row.getTag();
 		}
 
 		String label = getItem(pos);
 		holder.id = pos;
-		holder.text.setText(label);
-		return view;
-	}
-
-	@Override
-	public void onClick(View view) {
-		ViewHolder holder = (ViewHolder)((View)view.getParent()).getTag();
-		mActivity.onDirectoryClicked((int)holder.id);
+		row.getTextView().setText(label);
+		return row;
 	}
 
 }

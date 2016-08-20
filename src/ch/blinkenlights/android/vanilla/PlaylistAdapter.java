@@ -108,7 +108,7 @@ public class PlaylistAdapter extends CursorAdapter implements Handler.Callback {
 	public void bindView(View view, Context context, Cursor cursor)
 	{
 		DraggableRow dview = (DraggableRow)view;
-		dview.setupLayout(DraggableRow.LAYOUT_COVERVIEW);
+		dview.setupLayout(DraggableRow.LAYOUT_DRAGGABLE);
 		dview.showDragger(mEditable);
 
 		TextView textView = dview.getTextView();
@@ -125,7 +125,7 @@ public class PlaylistAdapter extends CursorAdapter implements Handler.Callback {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent)
 	{
-		return mInflater.inflate(R.layout.draggable_row, null);
+		return mInflater.inflate(R.layout.draggable_row, parent, false);
 	}
 
 	/**
