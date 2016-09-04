@@ -30,23 +30,25 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-
+import android.text.InputType;
+import android.widget.EditText;
 
 public class PlaylistDialog extends DialogFragment
 	implements DialogInterface.OnClickListener
 {
+
 	/**
 	 * A class implementing our callback interface
 	 */
 	private Callback mCallback;
 	/**
-	 * The intent to act on
+	 * The data passed to the callback
 	 */
-	private Intent mIntent;
+	private PlaylistDialog.Data mData;
 	/**
-	 * The media adapter to pass on which will be used to query all songs
+	 * A editText instance
 	 */
-	private MediaAdapter mAllSrc;
+	private EditText mEditText;
 	/**
 	 * Array of all found playlist names
 	 */
@@ -56,23 +58,33 @@ public class PlaylistDialog extends DialogFragment
 	 */
 	private long[] mItemValue;
 	/**
-	 * Magic value, indicating that a new
-	 * playlist shall be created
+	 * Index of 'create playlist' button
 	 */
-	private final int VALUE_CREATE_PLAYLIST = -1;
+	private final int BUTTON_CREATE_PLAYLIST = 0;
 	/**
 	 * Our callback interface
 	 */
 	public interface Callback {
-		void appendToPlaylistFromIntent(Intent intent, MediaAdapter allSource);
-		void createNewPlaylistFromIntent(Intent intent, MediaAdapter allSource);
+		void updatePlaylistFromPlaylistDialog(PlaylistDialog.Data data);
+	}
+	/**
+	 * Our data structure
+	 */
+	public class Data {
+		public String name;
+		public long id;
+		public Intent sourceIntent;
+		public MediaAdapter allSource;
 	}
 
-
+	/**
+	 * Creates a new playlist dialog to assemble a playlist using an intent
+	 */
 	PlaylistDialog(Callback callback, Intent intent, MediaAdapter allSource) {
 		mCallback = callback;
-		mIntent = intent;
-		mAllSrc = allSource;
+		mData = new PlaylistDialog.Data();
+		mData.sourceIntent = intent;
+		mData.allSource = allSource;
 	}
 
 	@Override
@@ -87,7 +99,7 @@ public class PlaylistDialog extends DialogFragment
 
 		// Index 0 is always 'New Playlist...'
 		mItemName[0] = getResources().getString(R.string.new_playlist);
-		mItemValue[0] = VALUE_CREATE_PLAYLIST;
+		mItemValue[0] = -1;
 
 		for (int i = 0 ; i < count; i++) {
 			cursor.moveToPosition(i);
@@ -102,15 +114,42 @@ public class PlaylistDialog extends DialogFragment
 		return builder.create();
 	}
 
+	/**
+	 * Assembles an input dialog
+	 * FIXME: Should have a watcher and replace create <-> overwrite
+	 */
+	private Dialog createInputDialog() {
+		mEditText = new EditText(getActivity());
+		mEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(R.string.new_playlist)
+			.setView(mEditText)
+			.setPositiveButton(R.string.create, this)
+			.setNegativeButton(android.R.string.cancel, this);
+		return builder.create();
+	}
+
+
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
-		if (mItemValue[which] == VALUE_CREATE_PLAYLIST) {
-			mCallback.createNewPlaylistFromIntent(mIntent, mAllSrc);
-		} else {
-			Intent copy = new Intent(mIntent);
-			copy.putExtra("playlist", mItemValue[which]);
-			copy.putExtra("playlistName", mItemName[which]);
-			mCallback.appendToPlaylistFromIntent(copy, mAllSrc);
+		switch (which) {
+			case DialogInterface.BUTTON_NEGATIVE:
+				// noop
+				break;
+			case BUTTON_CREATE_PLAYLIST:
+				createInputDialog().show();
+				break;
+			case DialogInterface.BUTTON_POSITIVE:
+				mData.id = -1;
+				mData.name = mEditText.getText().toString();
+				mCallback.updatePlaylistFromPlaylistDialog(mData);
+				break;
+			default:
+				mData.id = mItemValue[which];
+				mData.name = mItemName[which];
+				mCallback.updatePlaylistFromPlaylistDialog(mData);
 		}
+		dialog.dismiss();
 	}
 }

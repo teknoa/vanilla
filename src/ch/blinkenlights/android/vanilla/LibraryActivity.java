@@ -675,10 +675,11 @@ public class LibraryActivity
 			pickSongs(intent, ACTION_ENQUEUE_AS_NEXT);
 			break;
 		case CTX_MENU_RENAME_PLAYLIST: {
-			PlaylistTask playlistTask = new PlaylistTask(intent.getLongExtra("id", -1), intent.getStringExtra("title"));
-			NewPlaylistDialog dialog = new NewPlaylistDialog(this, intent.getStringExtra("title"), R.string.rename, playlistTask);
-			dialog.setDismissMessage(mHandler.obtainMessage(MSG_RENAME_PLAYLIST, dialog));
-			dialog.show();
+// FIXME
+//			PlaylistTask playlistTask = new PlaylistTask(intent.getLongExtra("id", -1), intent.getStringExtra("title"));
+//			NewPlaylistDialog dialog = new NewPlaylistDialog(this, intent.getStringExtra("title"), R.string.rename, playlistTask);
+//			dialog.setDismissMessage(mHandler.obtainMessage(MSG_RENAME_PLAYLIST, dialog));
+//			dialog.show();
 			break;
 		}
 		case CTX_MENU_DELETE:
