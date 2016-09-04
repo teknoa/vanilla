@@ -470,12 +470,8 @@ public abstract class PlaybackActivity extends Activity
 			break;
 		}
 		case MSG_RENAME_PLAYLIST: {
-// FIXME
-//			NewPlaylistDialog dialog = (NewPlaylistDialog)message.obj;
-//			if (dialog.isAccepted()) {
-//				long playlistId = dialog.getPlaylistTask().playlistId;
-//				Playlist.renamePlaylist(getContentResolver(), playlistId, dialog.getText());
-//			}
+			PlaylistTask playlistTask = (PlaylistTask)message.obj;
+			Playlist.renamePlaylist(getContentResolver(), playlistTask.playlistId, playlistTask.name);
 			break;
 		}
 		case MSG_DELETE: {
