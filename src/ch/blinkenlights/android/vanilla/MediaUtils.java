@@ -29,10 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Vector;
 import java.util.zip.CRC32;
-
-import junit.framework.Assert;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
@@ -88,10 +85,10 @@ public class MediaUtils {
 	public static final int TYPE_COUNT = 6;
 
 	/**
-	 * The default sort order for media queries. First artist, then album, then
-	 * track number.
+	 * The default sort order for media queries. First track number, title,  artist, then album
+	 * .
 	 */
-	public static final String DEFAULT_SORT = "artist_key,album_key,track";
+	public static final String DEFAULT_SORT = "track,title,artist_key,album_key";
 
 	/**
 	 * The default sort order for albums. First the album, then tracknumber
@@ -663,7 +660,9 @@ public class MediaUtils {
 		   -> terminated with a / if it is a directory
 		   -> ended with a % for the LIKE query
 		*/
+
 		path = addDirEndSlash(sanitizeMediaPath(path)) + "%";
+
 		final String query = "_data LIKE ? AND "+MediaStore.Audio.Media.IS_MUSIC;
 		String[] qargs = { path };
 

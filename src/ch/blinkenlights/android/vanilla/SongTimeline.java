@@ -28,6 +28,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -210,6 +212,7 @@ public final class SongTimeline {
 	 * @see SongTimeline#shiftCurrentSong(int)
 	 */
 	public static final int SHIFT_NEXT_ALBUM = 2;
+	private static final String TAG = "SongTimeline";
 
 	private final Context mContext;
 	/**
@@ -677,6 +680,18 @@ public final class SongTimeline {
 	 */
 	public int addSongs(Context context, QueryTask query)
 	{
+
+		/*
+		 *	If user selects file, memorise the file and read the whole the directory
+		 *	anyway and put it in the timeline.
+		 *	The timeline will then be set to the chosen song and start playing from there
+		 */
+		String selectedFilePath = null;
+		if( ! query.selectionArgs[0].endsWith("/")) {
+			selectedFilePath = query.selectionArgs[0];
+			query.selectionArgs[0] = query.selectionArgs[0].substring(0, query.selectionArgs[0].lastIndexOf('/'));
+		}
+
 		Cursor cursor = query.runQuery(context.getContentResolver());
 		if (cursor == null) {
 			return 0;
@@ -703,6 +718,9 @@ public final class SongTimeline {
 		}
 
 		ArrayList<Song> timeline = mSongs;
+
+		int skipToSong = -1;
+
 		synchronized (this) {
 			saveActiveSongs();
 
@@ -745,13 +763,24 @@ public final class SongTimeline {
 				addAtPos = start;
 			}
 
+			//boolean skipSongsBefore = false;
+
+			//Log.d(TAG, "selected song to skip to: " + query.selectedFilePath);
 			for (int j = 0; j != count; ++j) {
 				cursor.moveToPosition(j);
 
 				Song song = new Song(-1);
 				song.populate(cursor);
+
+
+				if(song.path.equals(selectedFilePath))
+					skipToSong = j;
+				//Log.d(TAG, "cursor cur song: " + song.path);
+
+				// skip songs that are listed before the selected song
 				if (song.isFilled() == false) {
 					// Song vanished from device for some reason: we are silently skipping it.
+					Log.d(TAG, "skipping");
 					continue;
 				}
 
@@ -800,6 +829,8 @@ public final class SongTimeline {
 		}
 
 		changed();
+
+		setCurrentQueuePosition(skipToSong);
 
 		return added;
 	}

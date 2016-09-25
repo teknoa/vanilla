@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.text.format.DateUtils;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -36,6 +37,7 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 	           SeekBar.OnSeekBarChangeListener,
 	           PlaylistDialog.Callback
 {
+	private static final String TAG = "SlidingPlaybackActivity";
 	/**
 	 * Reference to the inflated menu
 	 */
@@ -244,11 +246,14 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 		long id = intent.getLongExtra("id", LibraryAdapter.INVALID_ID);
 		QueryTask query;
 		if (type == MediaUtils.TYPE_FILE) {
+			//Log.d(TAG, "Playing file: " + intent.getStringExtra("file"));
 			query = MediaUtils.buildFileQuery(intent.getStringExtra("file"), projection);
 		} else if (allSource != null) {
+			//Log.d(TAG, "allSource != null");
 			query = allSource.buildSongQuery(projection);
 			query.data = id;
 		} else {
+			//Log.d(TAG, "MediaUtils.buildQuery");
 			query = MediaUtils.buildQuery(type, id, projection, null);
 		}
 
