@@ -689,7 +689,7 @@ public final class SongTimeline {
 		String selectedFilePath = null;
 		if( ! query.selectionArgs[0].endsWith("/")) {
 			selectedFilePath = query.selectionArgs[0];
-			query.selectionArgs[0] = query.selectionArgs[0].substring(0, query.selectionArgs[0].lastIndexOf('/'));
+			query.selectionArgs[0] = query.selectionArgs[0].substring(0, query.selectionArgs[0].lastIndexOf('/') + 1) + "%";
 		}
 
 		Cursor cursor = query.runQuery(context.getContentResolver());
