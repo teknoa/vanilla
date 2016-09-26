@@ -1506,7 +1506,7 @@ public final class PlaybackService extends Service
 	@Override
 	public boolean handleMessage(Message message)
 	{
-		switch (message.what) {
+   		switch (message.what) {
 		case MSG_CALL_GO:
 			if (message.arg1 == 0)
 				playPause();
@@ -1918,7 +1918,7 @@ public final class PlaybackService extends Service
 	/**
 	 * Add an Activity to the registered PlaybackActivities.
 	 *
-	 * @param activity The Activity to be added
+	 
 	 */
 	public static void addTimelineCallback(TimelineCallback consumer)
 	{
@@ -1928,7 +1928,7 @@ public final class PlaybackService extends Service
 	/**
 	 * Remove an Activity from the registered PlaybackActivities
 	 *
-	 * @param activity The Activity to be removed
+
 	 */
 	public static void removeTimelineCallback(TimelineCallback consumer)
 	{
@@ -2103,6 +2103,7 @@ public final class PlaybackService extends Service
 
 		Notification notification = new Notification();
 		notification.contentView = views;
+		notification.visibility = Notification.VISIBILITY_PUBLIC;
 		notification.icon = R.drawable.status_icon;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		notification.contentIntent = mNotificationAction;
