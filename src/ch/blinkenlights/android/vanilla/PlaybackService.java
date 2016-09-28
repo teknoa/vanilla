@@ -228,6 +228,9 @@ public final class PlaybackService extends Service
 	 * Set when the user needs to select songs to play.
 	 */
 	public static final int FLAG_EMPTY_QUEUE = 0x8;
+
+	public static final int FLAG_STOP = 0x10;
+
 	public static final int SHIFT_FINISH = 4;
 	/**
 	 * These three bits will be one of SongTimeline.FINISH_*.
@@ -567,9 +570,10 @@ public final class PlaybackService extends Service
 				cycleShuffle();
 			} else if (ACTION_CLOSE_NOTIFICATION.equals(action)) {
 				mForceNotificationVisible = false;
-				pause();
+				//pause();
+				stop();
 				stopForeground(true); // sometimes required to clear notification
-				updateNotification();
+//				updateNotification();
 			}
 		}
 
@@ -1012,7 +1016,8 @@ public final class PlaybackService extends Service
 				// In both cases we will update the notification to reflect the
 				// actual playback state (or to hit cancel() as this is required to
 				// get rid of it if it was created via notify())
-				boolean removeNotification = (mForceNotificationVisible == false && mNotificationMode != ALWAYS);
+				boolean removeNotification;// = (mForceNotificationVisible == false && mNotificationMode != ALWAYS);
+				removeNotification = (mState & FLAG_STOP) != 0;
 				stopForeground(removeNotification);
 				updateNotification();
 
@@ -1133,7 +1138,8 @@ public final class PlaybackService extends Service
 
 	private void updateNotification()
 	{
-		if ((mForceNotificationVisible || mNotificationMode == ALWAYS || mNotificationMode == WHEN_PLAYING && (mState & FLAG_PLAYING) != 0) && mCurrentSong != null)
+		//if ((mForceNotificationVisible || mNotificationMode == ALWAYS || mNotificationMode == WHEN_PLAYING && (mState & FLAG_PLAYING) != 0) && mCurrentSong != null)
+		if (((mState & FLAG_STOP) == 0)  && (mForceNotificationVisible || mNotificationMode == ALWAYS || mNotificationMode == WHEN_PLAYING ) && mCurrentSong != null)
 			mNotificationManager.notify(NOTIFICATION_ID, createNotification(mCurrentSong, mState, mNotificationMode));
 		else
 			mNotificationManager.cancel(NOTIFICATION_ID);
@@ -1185,7 +1191,7 @@ public final class PlaybackService extends Service
 				showMirrorLinkSafeToast(R.string.random_enabling, Toast.LENGTH_SHORT);
 			}
 
-			int state = updateState(mState | FLAG_PLAYING);
+			int state = updateState(mState | FLAG_PLAYING & ~FLAG_STOP);
 			userActionTriggered();
 			return state;
 		}
@@ -1200,12 +1206,23 @@ public final class PlaybackService extends Service
 	{
 		synchronized (mStateLock) {
 			mTransientAudioLoss = false; // do not resume playback as this pause was user initiated
-			int state = updateState(mState & ~FLAG_PLAYING & ~FLAG_DUCKING);
+			int state = updateState(mState & ~FLAG_PLAYING & ~FLAG_DUCKING & ~FLAG_STOP);
 			userActionTriggered();
 			return state;
 		}
 	}
 
+	public int stop()
+	{
+		synchronized(mStateLock) {
+			mTransientAudioLoss = false; // do not resume playback as this pause was user initiated
+			int newstate = mState & ~FLAG_PLAYING & ~FLAG_DUCKING | FLAG_STOP;
+			int state = updateState(newstate);
+			userActionTriggered();
+
+			return state;
+		}
+	}
 	/**
 	 * If playing, pause. If paused, play.
 	 *
@@ -1918,7 +1935,7 @@ public final class PlaybackService extends Service
 	/**
 	 * Add an Activity to the registered PlaybackActivities.
 	 *
-	 
+
 	 */
 	public static void addTimelineCallback(TimelineCallback consumer)
 	{
@@ -2103,7 +2120,6 @@ public final class PlaybackService extends Service
 
 		Notification notification = new Notification();
 		notification.contentView = views;
-		notification.visibility = Notification.VISIBILITY_PUBLIC;
 		notification.icon = R.drawable.status_icon;
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
 		notification.contentIntent = mNotificationAction;
