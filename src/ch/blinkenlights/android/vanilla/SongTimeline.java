@@ -688,7 +688,9 @@ public final class SongTimeline {
 		 */
 		String selectedFilePath = null;
 		if( ! query.selectionArgs[0].endsWith("/")) {
-			selectedFilePath = query.selectionArgs[0];
+			// remove '%' from file;
+			selectedFilePath = query.selectionArgs[0].substring(0,query.selectionArgs[0].length()-1);
+			// add '%' back for search
 			query.selectionArgs[0] = query.selectionArgs[0].substring(0, query.selectionArgs[0].lastIndexOf('/') + 1) + "%";
 		}
 
@@ -719,7 +721,7 @@ public final class SongTimeline {
 
 		ArrayList<Song> timeline = mSongs;
 
-		int skipToSong = -1;
+		int skipToSong = 0;
 
 		synchronized (this) {
 			saveActiveSongs();
