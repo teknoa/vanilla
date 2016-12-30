@@ -338,6 +338,7 @@ public class LibraryPagerAdapter
 				mGenreAdapter.setExpandable(mSongsPosition != -1);
 				break;
 			case MediaUtils.TYPE_FILE:
+
 				adapter = mFilesAdapter = new FileSystemAdapter(activity, mPendingFileLimiter);
 				mPendingFileLimiter = null;
 				break;

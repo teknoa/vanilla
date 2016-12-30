@@ -28,6 +28,11 @@ THE SOFTWARE.
 		android:fragment="ch.blinkenlights.android.vanilla.SDScannerFragment"
 		android:title="@string/sdscanner" />
 	<CheckBoxPreference
+		android:key="only_show_musicfiles"
+		android:title="@string/only_show_musicfiles"
+		android:summary="@string/only_show_musicfiles"
+		android:defaultValue="true" />
+	<CheckBoxPreference
 		android:key="disable_lockscreen"
 		android:title="@string/disable_lockscreen_title"
 		android:summary="@string/disable_lockscreen_summary"

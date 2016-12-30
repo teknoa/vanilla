@@ -194,6 +194,10 @@ public abstract class PlaybackActivity extends Activity
 		setSong(PlaybackService.get(this).rewindCurrentSong());
 	}
 
+	private void rewindFiveSeconds() {
+		PlaybackService playbackService = PlaybackService.get(this);
+		playbackService.setPosition(playbackService.getPosition() - 5000);
+	}
 
 	@Override
 	public void onClick(View view)
@@ -207,6 +211,9 @@ public abstract class PlaybackActivity extends Activity
 			break;
 		case R.id.previous:
 			rewindCurrentSong();
+			break;
+		case R.id.rewind:
+			rewindFiveSeconds();
 			break;
 		case R.id.end_action:
 			cycleFinishAction();
@@ -304,6 +311,7 @@ public abstract class PlaybackActivity extends Activity
 	protected void bindControlButtons() {
 		View previousButton = findViewById(R.id.previous);
 		previousButton.setOnClickListener(this);
+
 		mPlayPauseButton = (ImageButton)findViewById(R.id.play_pause);
 		mPlayPauseButton.setOnClickListener(this);
 		View nextButton = findViewById(R.id.next);

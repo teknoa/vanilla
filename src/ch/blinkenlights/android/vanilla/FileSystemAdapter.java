@@ -25,6 +25,7 @@ package ch.blinkenlights.android.vanilla;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.FileObserver;
 import android.util.Log;
@@ -35,6 +36,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -76,21 +78,39 @@ public class FileSystemAdapter
 	 * The currently active filter, entered by the user from the search box.
 	 */
 	String[] mFilter;
+
+	/**
+	 * a general filter, that is activated as standard, to only show
+	 * audio files
+	 */
+	String[] generalFilter;
 	/**
 	 * Excludes dot files and files not matching mFilter.
 	 */
-	private final FilenameFilter mFileFilter = new FilenameFilter() {
+	private final FileFilter mFileFilter = new FileFilter() {
 		@Override
-		public boolean accept(File dir, String filename)
+		public boolean accept(File file)
 		{
+			if(file.isDirectory())
+				return true;
+			String filename = file.getName().toLowerCase();
 			if (filename.charAt(0) == '.')
 				return false;
 			if (mFilter != null) {
-				filename = filename.toLowerCase();
+
+
 				for (String term : mFilter) {
-					if (!filename.contains(term))
-						return false;
+					if (filename.contains(term))
+						return true;
 				}
+				//return false;
+			} else if(generalFilter != null) {
+
+				for (String term : generalFilter) {
+					if (filename.contains(term))
+						return true;
+				}
+				return false;
 			}
 			return true;
 		}
@@ -136,6 +156,9 @@ public class FileSystemAdapter
 			limiter = buildLimiter( FileUtils.getFilesystemBrowseStart(activity) );
 		}
 		setLimiter(limiter);
+
+
+
 	}
 
 	@Override
@@ -146,7 +169,12 @@ public class FileSystemAdapter
 		if (mFileObserver == null) {
 			mFileObserver = new Observer(file.getPath());
 		}
-
+		SharedPreferences sharedPrefs = PlaybackService.getSettings(mActivity);
+		boolean onlyshowmusicfiles = sharedPrefs.getBoolean(PrefKeys.ONLY_SHOW_MUSIC_FILES, PrefDefaults.ONLY_SHOW_MUSIC_FILES);
+		if(onlyshowmusicfiles)
+			generalFilter = new String[]{".mp3", "mp4"};
+		else
+			generalFilter = null;
 		File[] files = file.listFiles(mFileFilter);
 		if (files != null)
 			Arrays.sort(files, mFileComparator);
@@ -218,8 +246,9 @@ public class FileSystemAdapter
 	@Override
 	public void setFilter(String filter)
 	{
-		if (filter == null)
+		if (filter == null) {
 			mFilter = null;
+		}
 		else
 			mFilter = SPACE_SPLIT.split(filter.toLowerCase());
 	}
@@ -307,7 +336,7 @@ public class FileSystemAdapter
 	/**
 	 * A row was clicked: this was dispatched by LibraryPagerAdapter
 	 *
-	 * @param View view which was clicked
+	 * @param view which was clicked
 	 */
 	public void onViewClicked(View view) {
 		Intent intent = createData(view);

@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.util.Base64;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,6 +88,25 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 		mSeekBar.setMax(1000);
 		mSeekBar.setOnSeekBarChangeListener(this);
 		setDuration(0);
+
+		View rewindButton = findViewById(R.id.rewind);
+		rewindButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				PlaybackService playbackService = PlaybackService.get(SlidingPlaybackActivity.this);
+				playbackService.setPosition(playbackService.getPosition() - 5000);
+
+			}
+		});
+		View forwardButton = findViewById(R.id.forward);
+		forwardButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				PlaybackService playbackService = PlaybackService.get(SlidingPlaybackActivity.this);
+				playbackService.setPosition(playbackService.getPosition() + 5000);
+
+			}
+		});
 	}
 
 	@Override
@@ -179,7 +199,7 @@ public class SlidingPlaybackActivity extends PlaybackActivity
 	 * Called by PlaylistDialog.Callback to append data to
 	 * a playlist
 	 *
-	 * @param intent The intent holding the selected data
+	 * @param data The intent holding the selected data
 	 */
 	public void updatePlaylistFromPlaylistDialog(PlaylistDialog.Data data) {
 		PlaylistTask playlistTask = new PlaylistTask(data.id, data.name);

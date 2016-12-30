@@ -1627,6 +1627,11 @@ public final class PlaybackService extends Service
 		return mMediaPlayer.getCurrentPosition();
 	}
 
+	public void setPosition(int position) {
+		if(!mMediaPlayerInitialized)
+			return;
+		mMediaPlayer.seekTo(position);
+	}
 	/**
 	 * Returns the song duration in milliseconds.
 	*/

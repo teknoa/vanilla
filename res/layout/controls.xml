@@ -39,6 +39,7 @@ THE SOFTWARE.
 		android:scaleType="fitCenter"
 		android:src="@drawable/previous"
 		android:contentDescription="@string/previous_song" />
+
 	<ch.blinkenlights.android.vanilla.VanillaImageButton
 		android:id="@+id/play_pause"
 		android:layout_height="fill_parent"

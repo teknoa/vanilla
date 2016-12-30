@@ -208,6 +208,8 @@ THE SOFTWARE.
 	<string name="shake_threshold_title">Shake force threshold</string>
 
 	<string name="misc_features">Miscellaneous features</string>
+	<string name="only_show_musicfiles">Show only music files</string>
+
 	<string name="theme">Theme</string>
 	<string name="disable_lockscreen_title">Disable lockscreen</string>
 	<string name="disable_lockscreen_summary">Prevent the lockscreen from activating when in the library or playback screen</string>
@@ -264,6 +266,10 @@ THE SOFTWARE.
 	<string name="play_pause">Play/Pause</string>
 	<string name="next_song">Next track</string>
 	<string name="previous_song">Previous track</string>
+	<string name="rewind_song">Rewind track</string>
+	<string name="forward_song">Forward track</string>
+
+
 	<string name="next_album">Next album</string>
 	<string name="previous_album">Previous album</string>
 	<string name="cycle_repeat_mode">Cycle repeat mode</string>

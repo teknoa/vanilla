@@ -21,8 +21,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.util.Log;
 
 public class ThemeHelper {
+
+	private static final String TAG = "ThemeHelper";
 
 	/**
 	 * Calls context.setTheme() with given theme.
@@ -95,7 +98,9 @@ public class ThemeHelper {
 	 */
 	final private static int getSelectedTheme(Context context) {
 		SharedPreferences settings = PlaybackService.getSettings(context);
-		return Integer.parseInt(settings.getString(PrefKeys.SELECTED_THEME, PrefDefaults.SELECTED_THEME));
+		String themeid = settings.getString(PrefKeys.SELECTED_THEME, PrefDefaults.SELECTED_THEME);
+		Integer id = Integer.parseInt(themeid);
+		return id;
 	}
 
 	/**

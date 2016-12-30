@@ -39,6 +39,15 @@ THE SOFTWARE.
 			android:layout_width="wrap_content"
 			android:layout_gravity="center"
 			android:paddingLeft="5dip" />
+		<ch.blinkenlights.android.vanilla.VanillaImageButton
+			android:id="@+id/rewind"
+			android:layout_height="fill_parent"
+			android:layout_width="0px"
+			android:layout_weight="0.1"
+			android:background="?android:attr/selectableItemBackground"
+			android:scaleType="fitCenter"
+			android:src="@drawable/previous"
+			android:contentDescription="@string/rewind_song" />
 		<SeekBar
 			android:id="@+id/seek_bar"
 			android:layout_height="wrap_content"
@@ -51,6 +60,16 @@ THE SOFTWARE.
 			android:paddingLeft="18dip"
 			android:paddingRight="18dip"
 			android:layout_weight="1" />
+		<ch.blinkenlights.android.vanilla.VanillaImageButton
+			android:id="@+id/forward"
+			android:layout_height="fill_parent"
+			android:layout_width="0px"
+			android:layout_weight="0.1"
+			android:paddingRight="10dip"
+			android:background="?android:attr/selectableItemBackground"
+			android:scaleType="fitCenter"
+			android:src="@drawable/next"
+			android:contentDescription="@string/forward_song" />
 		<TextView
 			android:id="@+id/duration"
 			android:layout_height="wrap_content"
