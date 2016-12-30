@@ -44,6 +44,7 @@ THE SOFTWARE.
 			android:layout_height="fill_parent"
 			android:layout_width="0px"
 			android:layout_weight="0.1"
+			android:paddingLeft="10dip"
 			android:background="?android:attr/selectableItemBackground"
 			android:scaleType="fitCenter"
 			android:src="@drawable/previous"
