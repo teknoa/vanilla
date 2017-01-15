@@ -81,6 +81,10 @@ public final class PlaybackService extends Service
 			 , SensorEventListener
 			 , AudioManager.OnAudioFocusChangeListener
 {
+	private static String TAG = "PlaybackService";
+
+	private static Log log;
+
 	/**
 	 * Name of the state file.
 	 */
@@ -569,11 +573,13 @@ public final class PlaybackService extends Service
 			} else if (ACTION_CYCLE_SHUFFLE.equals(action)) {
 				cycleShuffle();
 			} else if (ACTION_CLOSE_NOTIFICATION.equals(action)) {
+				log.d(TAG, "action closed called");
 				mForceNotificationVisible = false;
 				//pause();
 				stop();
 				stopForeground(true); // sometimes required to clear notification
-//				updateNotification();
+				// it seems, that stopForeground(true) not always cancels the notification
+				updateNotification();
 			}
 		}
 
