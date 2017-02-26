@@ -34,7 +34,6 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -42,10 +41,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.util.LruCache;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.LinearLayout;
+
 import java.util.Arrays;
 
 /**

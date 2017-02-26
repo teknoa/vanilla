@@ -38,7 +38,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
-import android.provider.MediaStore.Audio.Playlists.Members;
 
 /**
  * CursorAdapter backed by MediaStore playlists.
