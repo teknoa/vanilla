@@ -93,6 +93,13 @@ public class FileUtils {
 	public static File getFilesystemBrowseStart(Context context) {
 		SharedPreferences prefs = PlaybackService.getSettings(context);
 		String folder = prefs.getString(PrefKeys.FILESYSTEM_BROWSE_START, PrefDefaults.FILESYSTEM_BROWSE_START);
+		/*
+		check if directory is still there
+		 */
+		File f = new File(folder);
+		if(!f.exists())
+			folder = PrefDefaults.FILESYSTEM_BROWSE_START;
+
 		return new File( folder.equals("") ? Environment.getExternalStorageDirectory().getAbsolutePath() : folder );
 	}
 }
