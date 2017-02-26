@@ -18,16 +18,10 @@
 package ch.blinkenlights.android.vanilla;
 
 import android.content.Context;
-import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.LayoutInflater;
-import android.widget.TextView;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.ArrayAdapter;
-import android.graphics.drawable.Drawable;
 
 public class FilebrowserStartAdapter
 	extends ArrayAdapter<String>
@@ -42,24 +36,30 @@ public class FilebrowserStartAdapter
 
 	@Override
 	public View getView(int pos, View convertView, ViewGroup parent) {
-		DraggableRow row;
+		FileSystemRowView row;
+//		TextView row;
 		ViewHolder holder;
 
 		if (convertView == null) {
-			row = (DraggableRow)mInflater.inflate(R.layout.draggable_row, parent, false);
+
+			row = (FileSystemRowView)mInflater.inflate(R.layout.filesystemrow, parent, false);
 			row.setupLayout(DraggableRow.LAYOUT_LISTVIEW);
 
-			row.getCoverView().setImageResource(R.drawable.folder);
-
+//			row.getCoverView().setImageResource(R.drawable.folder);
 			holder = new ViewHolder();
 			row.setTag(holder);
+/*
+			row = new TextView(getContext());
+*/
 		} else {
-			row = (DraggableRow)convertView;
+			row = (FileSystemRowView)convertView;
+//			row = (TextView)convertView;
 			holder = (ViewHolder)row.getTag();
 		}
 
 		String label = getItem(pos);
 		holder.id = pos;
+//		row.setText(label);
 		row.getTextView().setText(label);
 		return row;
 	}
