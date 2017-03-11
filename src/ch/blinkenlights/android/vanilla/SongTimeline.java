@@ -681,13 +681,18 @@ public final class SongTimeline {
 	public int addSongs(Context context, QueryTask query)
 	{
 
+
+		int mode = query.mode;
+		int type = query.type;
+		long data = query.data;
+
 		/*
 		 *	If user selects file, memorise the file and read the whole the directory
 		 *	anyway and put it in the timeline.
 		 *	The timeline will then be set to the chosen song and start playing from there
 		 */
 		String selectedFilePath = null;
-		if( ! query.selectionArgs[0].endsWith("/")) {
+		if(type == MediaUtils.TYPE_FILE &&  ! query.selectionArgs[0].endsWith("/")) {
 			// remove '%' from file;
 			selectedFilePath = query.selectionArgs[0].substring(0,query.selectionArgs[0].length()-1);
 			// add '%' back for search
@@ -698,10 +703,6 @@ public final class SongTimeline {
 		if (cursor == null) {
 			return 0;
 		}
-
-		int mode = query.mode;
-		int type = query.type;
-		long data = query.data;
 
 		int count = cursor.getCount(); // Items found by query
 		int added = 0;                 // Items actually added to the queue
